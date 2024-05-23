@@ -1,5 +1,5 @@
 #==============================================================================
-# Building class
+# Landowner class
 # Used in CSS 458 A Spring 2024 Final Project - Rental Wars
 #
 # Team Digital Directors
@@ -9,6 +9,5 @@
 #- Imports of packages and modules:
 import numpy as N
 
-class Building():
+class Landowner():
     temp = None
-    
