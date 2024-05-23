@@ -7,7 +7,7 @@
 #==============================================================================
 
 #- Imports of packages and modules:
-
+import numpy as N
 
 class Landowner():
     temp = None
