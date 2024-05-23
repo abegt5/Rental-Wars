@@ -12,3 +12,6 @@ import matplotlib.pyplot as plt
 
 def plot_grid():
     return
+
+#show value of buildings 
+#show increase and decrease of net worth of landowners

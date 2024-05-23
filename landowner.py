@@ -9,5 +9,22 @@
 #- Imports of packages and modules:
 import numpy as N
 
-class Landowner():
-    temp = None
+class Landowner:
+    def __init__(self, money, preference, patience):
+        self.money = money # net worth, rent - morgage + building value - expenses
+        self.buildings = []
+        self.preference = preference
+        self.patience = patience
+
+    def acquire_building(self, building):
+        if self.money >= building.value:
+            self.money -= building.value
+            self.buildings.append(building)
+            building.owner = self
+
+    def redevelop_building(self, building):
+        # implementation for redevelopment
+        # call renovate for buildings
+        return None
+
+
