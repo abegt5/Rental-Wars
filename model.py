@@ -78,10 +78,10 @@ class Model:
         
         Checks step phase of model and updates city/landowners accordingly:
         
-        0 - Buildings: Update Vacancies, -> 1
+        0 - Buildings: Update Tenancies/Vacancies, -> 1
         1 - Landowners: Collect Rent, -> 2
         2 - Buildings: Update Rent based on Owner type -> 3
-        3 - Landowners: Update/Begin Decisions/Projects -> 4
+        3 - Landowners: Pay Upkeep, Update/Begin Decisions/Projects -> 4
         4 - City: Remove Retired Landowners, increment month -> 0
 
         (The step system is to organize the sequence and more easily insert code to extract data in-between steps.
