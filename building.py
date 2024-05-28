@@ -12,7 +12,7 @@ import numpy as N
 from .unit import Unit
 
 #========================== USER ADJUSTABLE (begin) ==========================
-unit_types = ["std", "1x1", "2x1", "2x2", "3x2", "3x3"]
+beds_max = 3
 
 #=========================== USER ADJUSTABLE (end) ===========================
 
