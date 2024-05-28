@@ -7,22 +7,33 @@
 #==============================================================================
 # Class Hierarchy: Model->City->Building
 
+# TODO:
+#   Stuff (I'm too tired to process what)
+
 #- Imports of packages and modules:
-import numpy as N
+import random
 from .unit import Unit
 
 #========================== USER ADJUSTABLE (begin) ==========================
-beds_max = 3
+units_min = 1
+units_max = 8
+age_max = 60
+status_list = ['EMPTY', 'RENTING', 'OCCUPIED']
 
 #=========================== USER ADJUSTABLE (end) ===========================
 
 class Building(object):
-    def __init__(self, x, y):
+    def __init__(self, x, y, owner=None, age=None, amenities=None, units=None):
+        """Building Initialization Function
+        
+        Initializes building to given parameters or random values if not provided (None)"""
         self.location = (x, y)
-        self.owner = None
-        self.status = 'uninhabited'  # or 'inhabited' or 'available for rent'
-        self.age = 0
-        self.amenities = []
+        self.owner = owner
+        self.status = 'EMPTY'
+        self.age = age
+        if (self.age==None): self.age=random.randint(0,age_max)
+        self.amenities = amenities
+        if (self.amenities==None): self.amenities = []
         self.units = []
         self.proximity_to_attractions = 0
         self.value = 0  # increase based on attractions, when renovated, and when amenities are added 
