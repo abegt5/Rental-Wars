@@ -1,8 +1,21 @@
+#==============================================================================
+# City class
+# Used in CSS 458 A Spring 2024 Final Project - Rental Wars
+#
+# Team Digital Directors
+# May 2024
+#==============================================================================
+# Class Hierarchy: Model->City
+
+#- Imports of packages and modules:
+import numpy as N
+from .poi import PoI
+
 class City(object):
     def __init__(self, size=50):
         self.size = size
         self.grid = [[None for _ in range(size)] for _ in range(size)]
-        self.attractions = []
+        self.pois = []
 
     def add_building(self, building):
         x, y = building.location

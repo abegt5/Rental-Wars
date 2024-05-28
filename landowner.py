@@ -5,6 +5,7 @@
 # Team Digital Directors
 # May 2024
 #==============================================================================
+# Class Hierarchy: Model->Landowner(List)->Landowner(Individual)
 
 #- Imports of packages and modules:
 import numpy as N
