@@ -9,6 +9,12 @@
 
 #- Imports of packages and modules:
 import numpy as N
+from .unit import Unit
+
+#========================== USER ADJUSTABLE (begin) ==========================
+unit_types = ["std", "1x1", "2x1", "2x2", "3x2", "3x3"]
+
+#=========================== USER ADJUSTABLE (end) ===========================
 
 class Building(object):
     def __init__(self, x, y):
