@@ -13,7 +13,7 @@
 #   brainstorm random events and add to event()
 # Low-Priority: 
 #   create data storage variables for values of note that are lost by end of simulation (needs further discussion)
-#   
+#   create plot system (can wait until the other simulation-related stuff is complete)
 
 #- Imports of packages and modules:
 import numpy as N
