@@ -5,6 +5,7 @@
 # Team Digital Directors
 # May 2024
 #==============================================================================
+# Class Hierarchy: Model->City->Building
 
 #- Imports of packages and modules:
 import numpy as N
