@@ -9,6 +9,12 @@
 
 #- Imports of packages and modules:
 import numpy as N
+from .unit import Unit
+
+#========================== USER ADJUSTABLE (begin) ==========================
+beds_max = 3
+
+#=========================== USER ADJUSTABLE (end) ===========================
 
 class Building(object):
     def __init__(self, x, y):
