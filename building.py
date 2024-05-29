@@ -12,8 +12,8 @@
 
 #- Imports of packages and modules:
 import random
-from .unit import Unit
-from .amenity import Amenities
+from unit import Unit
+from amenity import Amenities
 
 #========================== USER ADJUSTABLE (begin) ==========================
 age_max = 60
@@ -22,7 +22,7 @@ unit_type_list = ['std','1x1','2x1','2x2','3x1','3x2','3x3']
 #=========================== USER ADJUSTABLE (end) ===========================
 
 class Building(object):
-    def __init__(self, x, y, unit_max, amenity_upkeep, unit_upkeep, type=None, owner=None, age=None, amenities=None):
+    def __init__(self, x, y, unit_max, type=None, owner=None, age=None, amenities=None):
         """Building Initialization Function
         
         Initializes building to given parameters or random values if not provided (None)"""
@@ -36,6 +36,7 @@ class Building(object):
         self.amenities = amenities
         if (self.amenities==None): self.amenities = Amenities('rand')
         self.init_units(random.randint(1,unit_max))
+        self.value = 100
 
     def init_units(self, num_units):
         """Units Initialization Function, used as part of building.__init__()
@@ -43,7 +44,7 @@ class Building(object):
         Sets number of units in the building and populates unit list with randomly generated units that may or may not be occupied"""
         self.num_units = num_units
         self.units = []
-        for _ in range(num_units): self.units.append(Unit())
+        for _ in range(num_units): self.units.append(Unit(800)) # TODO change rent 
 
     def add_unit(self):
         """Add Unit Function, used during building improvement option of model.sim_step()
