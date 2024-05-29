@@ -57,9 +57,16 @@ class Model:
             money = random.randint(num_money_min, num_money_max)                    # Random int between min and max money adjustable for initial starting funds
             income = random.randint(num_income_min,num_income_max)                  # Random int between min and max income adjustable for monthly income
             patience = random.randint(num_patience_min,num_patience_max)            # Random int between min and max patience adjustable for patience in months
-            landowner = Landowner(money,income,patience)                            # Initialize individual landowner with starting funds, income, and patience
+            type = random.choice(owner_type)
+            landowner = Landowner(money,income,patience, type)                      # Initialize individual landowner with starting funds, income, and patience
             init_buildings = random.randint(1,num_init_buildings_max)               # Randomize number of buildings landowner will own
-            for b in range(init_buildings): landowner.assign_building(self.city)    # Free assignment of buildings
+            available_buildings = [building for row in self.city.grid for building in row if building and building.owner is None and building.value * 0.2 <= money] # find available buildings within budget of landowner 
+            for _ in range(init_buildings):
+                if available_buildings:
+                    building = random.choice(available_buildings)
+                    landowner.acquire_building(building)
+                    available_buildings.remove(building)                            # Ensure the building isn't chosen again
+
             self.landowners.append(landowner)                                       # Append landowner to list
             
 
