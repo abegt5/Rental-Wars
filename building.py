@@ -36,6 +36,7 @@ class Building(object):
         self.amenities = amenities
         if (self.amenities==None): self.amenities = Amenities('rand')
         self.init_units(random.randint(1,unit_max))
+        self.value = 100
 
     def init_units(self, num_units):
         """Units Initialization Function, used as part of building.__init__()
