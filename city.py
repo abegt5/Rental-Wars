@@ -16,9 +16,9 @@
 
 #- Imports of packages and modules:
 import numpy as N
-from .building import Building
-from .poi import PoI
-from .amenity import Amenities
+from building import Building
+from poi import PoI
+from amenity import Amenities
 
 class City(object):
     def __init__(self, size, prob_res, num_poi, num_building_unit_max):
