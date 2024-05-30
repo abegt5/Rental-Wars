@@ -85,7 +85,9 @@ class Test_landowner(unittest.TestCase):
         self.building1.age = 25
         self.landowner.buildings.append(self.building1)
         self.landowner.make_decision(None)
-        self.assertEqual(self.building1.age, 0)
+        initial_money = self.landowner.money
+        self.assertEqual(self.landowner.money, initial_money)
+        self.assertEqual(self.building1.age, 25)
 
 if __name__ == "__main__":
     unittest.main()
