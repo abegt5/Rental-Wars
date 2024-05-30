@@ -38,22 +38,21 @@ class City(object):
         self.amenity_cost.change_values([0.0,20000.0,1000.0,10000.0,10000.0, 5000.0, 5000.0, 10000.0])
         self.amenity_upkeep = Amenities('Num')    
         self.amenity_upkeep.change_values([0.0,100.0,200.0,150.0,200.0,200.0,200.0,100.0])
-        self.add_attractions(num_poi)
+        for _ in range(num_poi):self.add_poi()
         self.add_init_buildings(prob_res,num_building_unit_max)
 
-    def add_attractions(self, num_poi):
+    def add_poi(self, type=None):
         """Add Points of Interest Function"""
-        poi_types = ["Small", "Medium", "Large"]
-        count = 0
-        while count < num_poi:
+        miss = True
+        while miss:
             x = random.randint(0, self.size - 1)
             y = random.randint(0, self.size - 1)
             if self.grid[x][y] is None:
-                poi_type = random.choice(poi_types)
-                poi = PoI(x, y, poi_type)
-                self.pois.append(poi)
+                miss = False
+                poi = PoI(x, y, type)
+                if type=="Crime": self.bad_spots.append(poi)
+                else: self.attractions.append(poi)
                 self.grid[x][y] = poi
-                count += 1
         
     def add_init_buildings(self,prob_res,num_building_unit_max):
         """Add Residences (initial) Function
@@ -64,8 +63,7 @@ class City(object):
         for x in range(self.size):
             for y in range(self.size):
                 if self.grid[x][y] is None:
-                    prob_res1 = random.choice(prob_res)
-                    if random.random() < prob_res1:
+                    if random.random() < prob_res:
                         unit_max = random.randint(1, num_building_unit_max)
                         building = Building(x, y, unit_max)
                         self.grid[x][y] = building
