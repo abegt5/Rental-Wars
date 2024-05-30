@@ -12,9 +12,17 @@
 #   brainstorm random events and add to event()
 #   create data storage variables for values of note that are lost by end of simulation (needs further discussion)
 #   create plot system (can wait until the other simulation-related stuff is complete)
+# Class Hierarchy: Model(Top)
+
+# Temp TODO: 
+#   complete sim_step()
+#   brainstorm random events and add to event()
+#   create data storage variables for values of note that are lost by end of simulation (needs further discussion)
+#   create plot system (can wait until the other simulation-related stuff is complete)
 
 #- Imports of packages and modules:
 import numpy as N
+import random
 import random
 import matplotlib.pyplot as plt
 from .building import Building
