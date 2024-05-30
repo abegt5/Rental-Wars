@@ -22,7 +22,8 @@ from poi import PoI
 from city import City
 from landowner import Landowner
 from unit import Unit
-from visualize import plot_grid, plot_building_values, plot_landowner_metrics, plot_occupancy_rate
+from visualize import plot_grid, plot_building_values, plot_landowner_metrics, plot_occupancy_rate 
+
 
 #========================== USER ADJUSTABLE (begin) ==========================
 city_size = 50                                                                      # City Size

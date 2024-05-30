@@ -45,7 +45,7 @@ def plot_grid(city):
     plt.title('City Grid')
     plt.legend(handles=[plt.Line2D([0], [0], color=colors[key], lw=4) for key in colors],
                labels=[key for key in colors])
-    plt.show()
+    plt.show()  # Use pause instead of show
 
 def plot_building_values(city):
     """Plot the values of the buildings in the city grid."""
@@ -83,22 +83,33 @@ def plot_landowner_metrics(landowners):
     color = 'tab:green'
     ax2.set_ylabel('Decisions', color=color)
 
-    # Flatten the decisions list to extract 'action' for each landowner
-    action_labels = {'Acquire': 1, 'Pass': 2, 'Improve': 3, 'None': 4}
+    # Define markers and colors for different actions
+    action_markers = {'Acquire': 'o', 'Pass': 's', 'Improve': '^', 'None': 'x'}
+    action_colors = {'Acquire': 'tab:orange', 'Pass': 'tab:purple', 'Improve': 'tab:red', 'None': 'tab:gray'}
+    
+    # Create a set to keep track of added labels for the legend
+    handles = []
+    labels = []
+    
+    # Plot decisions for each landowner
     for idx, decision_list in enumerate(decisions):
-        actions = [action_labels[decision['action']] for decision in decision_list]
-        months = [decision['month'] for decision in decision_list]
-        ax2.plot(months, [idx] * len(actions), 'o', label=f'Landowner {idx+1}', alpha=0.7)  # Plot each decision as a point
-
+        for decision in decision_list:
+            action = decision['action']
+            month = decision['month']
+            sc = ax2.scatter(month, idx, marker=action_markers[action], color=action_colors[action], label=action, alpha=0.7)
+            if action not in labels:
+                handles.append(sc)
+                labels.append(action)
+    
     ax2.tick_params(axis='y', labelcolor=color)
     ax2.set_yticks(range(len(landowners)))
     ax2.set_yticklabels([f'Landowner {i+1}' for i in range(len(landowners))])
 
+    # Create a legend using the handles and labels collected
+    ax2.legend(handles, labels, loc='upper left')
+
     plt.title('Net Worth and Decisions of Landowners')
-    plt.legend(loc='upper left')
     plt.show()
-
-
 
 def plot_occupancy_rate(city):
     """Plot the occupancy rate of buildings in the city grid."""
