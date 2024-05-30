@@ -16,8 +16,10 @@ from unit import Unit
 from amenity import Amenities
 
 #========================== USER ADJUSTABLE (begin) ==========================
-age_max = 60
-unit_type_list = ['std','1x1','2x1','2x2','3x1','3x2','3x3']
+age_init_max = 60
+unit_type_list = ['std','1bd','2bd','3bd']
+unit_rent_list = [2000.0,2500.0,3000.0,3500.0]
+unit_value_list = [625000.0,1250000.0,2500000.0,5000000.0]
 
 #=========================== USER ADJUSTABLE (end) ===========================
 
@@ -29,14 +31,14 @@ class Building(object):
         self.location = (x, y)
         self.type = type
         if (self.type==None): self.type = random.choice(unit_type_list)
-        self.unit_upkeep = None # TODO: replace with unit_upkeep entry that correlates with self.type
+        self.rent = unit_rent_list[unit_type_list.index(self.type)]
         self.owner = owner
         self.age = age
-        if (self.age==None): self.age=random.randint(0,age_max)
+        if (self.age==None): self.age=random.randint(0,age_init_max)
         self.amenities = amenities
         if (self.amenities==None): self.amenities = Amenities('rand')
         self.init_units(random.randint(1,unit_max))
-        self.value = 10000
+        self.value = unit_value_list[unit_type_list.index(self.type)]
 
     def init_units(self, num_units):
         """Units Initialization Function, used as part of building.__init__()
@@ -44,7 +46,7 @@ class Building(object):
         Sets number of units in the building and populates unit list with randomly generated units that may or may not be occupied"""
         self.num_units = num_units
         self.units = []
-        for _ in range(num_units): self.units.append(Unit(800)) # TODO change rent 
+        for _ in range(num_units): self.units.append(Unit(self.rent)) # TODO change rent 
 
     def add_unit(self):
         """Add Unit Function, used during building improvement option of model.sim_step()
@@ -54,12 +56,10 @@ class Building(object):
         self.update_upkeep()
         self.update_value()
 
-    def update_attractiveness(self,attractiveness_list):
-        """Attractiveness Update Function, used before each Tenancy/Vacancy update at model.sim_step()
+    def post_rent(self):
+        """Post New Rent Function, used during Rent Update at model.sim_step()
         
-        Sets building attractiveness based on age, proximity to attractions, presence/absence of amenities, and rent comparison with same-unit buildings in the city"""
-        self.attractiveness=0.0
-        # placeholder for "add/subtract probability for everything else"
+        Updates building's posted rent in accordance to landowner's type and market average"""
         
 
     def update_rental_income(self):

@@ -28,12 +28,12 @@ class City(object):
         Initializes City Grid, Property List, Attraction List, and Bad Spots List"""
         self.grid = [[None for _ in range(size)] for _ in range(size)]
         self.properties = []
-        self.pois = []
+        self.attractions = []
         self.bad_spots = []
         self.size = size
         self.amenity_attract = Amenities('All')
         self.amenity_modifier = Amenities('Num')
-        self.amenity_modifier.change_values([(((random.random()*4)+1)/100) for _ in range(8)])
+        self.amenity_modifier.change_values([random.randint(1,5) for _ in range(8)])
         self.amenity_cost = Amenities('Num')
         self.amenity_cost.change_values([0.0,20000.0,1000.0,10000.0,10000.0, 5000.0, 5000.0, 10000.0])
         self.amenity_upkeep = Amenities('Num')    
@@ -112,3 +112,16 @@ class City(object):
 
     def get_building(self, x, y):
         return self.grid[x][y]
+    
+    # Jeremy: Don't know when this gets used
+    # update the proximity_to_attractions attribute for all buildings based on their distance to each attraction
+    def update_buildings_proximity_to_attractions(self):
+        for attraction in self.attractions:
+            for x in range(self.size):
+                for y in range(self.size):
+                    building = self.grid[x][y]
+                    if building:
+                        distance = abs(attraction.location[0] - x) + abs(attraction.location[1] - y)
+                        if distance <= attraction.value_increase_radius:
+                            building.proximity_to_attractions += 1  # or any specific value logic
+                            building.update_value()
