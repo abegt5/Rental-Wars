@@ -7,9 +7,6 @@
 #==============================================================================
 # Class Hierarchy: Model->City->PoI
 
-# TODO:
-#   Classify specific PoIs and give them differing influences
-
 class PoI:
     def __init__(self, x, y, poi_type):
         self.location = (x, y)
