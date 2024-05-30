@@ -22,11 +22,12 @@ from poi import PoI
 from city import City
 from landowner import Landowner
 from unit import Unit
-from visualize import visualize as V
+from visualize import *
 
 #========================== USER ADJUSTABLE (begin) ==========================
 city_size = 50                                                                      # City Size
 num_landowners = 20                                                                 # Initial number of Land Owners
+num_new_landowners = 10                                                             # Number of Land Owners added during Mid-sim event
 num_months = 240                                                                    # Number of months the simulation will run
 num_event_interval = 60                                                             # Number of months that pass before a mid-simulation event occurs
 num_money_min = 500000.0                                                            # Minimum amount of money a Landowner initializes with
@@ -59,7 +60,7 @@ class Model:
             income = random.randint(num_income_min,num_income_max)                  # Random int between min and max income adjustable for monthly income
             patience = random.randint(num_patience_min,num_patience_max)            # Random int between min and max patience adjustable for patience in months
             type = random.choice(owner_type)
-            landowner = Landowner(money,income,patience,type)                      # Initialize individual landowner with starting funds, income, and patience
+            landowner = Landowner(money,income,patience,type)                       # Initialize individual landowner with starting funds, income, and patience
             init_buildings = random.randint(1,num_init_buildings_max)               # Randomize number of buildings landowner will own
             available_buildings = [building for row in self.city.grid for building in row if building and building.owner is None and building.value * 0.2 <= money] # find available buildings within budget of landowner 
             for _ in range(init_buildings):
@@ -69,6 +70,7 @@ class Model:
                     available_buildings.remove(building)                            # Ensure the building isn't chosen again
 
             self.landowners.append(landowner)                                       # Append landowner to list
+        self.event_message = "Nothing Yet..."
             
 
     def run_sim(self, months):
@@ -141,6 +143,7 @@ class Model:
         match i:
             case 0:
                 # Pet Damage: Landowners take a fixed hit to their finances for every unit they own with a pet-friendly building
+                self.event_message = "Pet Damage: Pet-friendly units lose money"
                 for landowner in self.landowners:
                     for building in landowner.buildings:
                         if building.amenities.pets:
@@ -150,14 +153,83 @@ class Model:
 
             case 1:
                 # Crime Zone: An empty plot or unowned residence is replaced by a crime PoI
-                x = random.randint(0,city_size-1)
-                y = random.randint(0,city_size-1)
+                self.event_message = "Crime Zone: A Crime spot has appeared"
+                self.city.add_poi("Crime")
             case 2:
                 # New Blood: More Landowners enter the simulation and get buildings
-                None
+                self.event_message = "New Blood: %s new landowner(s) entered the simulation"
+                for _ in range(num_new_landowners):                                             # Populate Landowner List using:
+                    money = random.randint(num_money_min, num_money_max)                    # Random int between min and max money adjustable for initial starting funds
+                    income = random.randint(num_income_min,num_income_max)                  # Random int between min and max income adjustable for monthly income
+                    patience = random.randint(num_patience_min,num_patience_max)            # Random int between min and max patience adjustable for patience in months
+                    type = random.choice(owner_type)
+                    landowner = Landowner(money,income,patience,type)                      # Initialize individual landowner with starting funds, income, and patience
+                    init_buildings = random.randint(1,num_init_buildings_max)               # Randomize number of buildings landowner will own
+                    available_buildings = [building for row in self.city.grid for building in row if building and building.owner is None and building.value * 0.2 <= money]
+                    for _ in range(init_buildings):
+                        if available_buildings:
+                            building = random.choice(available_buildings)
+                            landowner.acquire_building(building)
+                            available_buildings.remove(building)                            # Ensure the building isn't chosen again
+
+                    self.landowners.append(landowner)                                       # Append landowner to list
             case 3:
                 # Necessary Amenity: Lack of a specific amenity now negatively impacts attractiveness
-                None
+                more = False
+                n_amenity = random.randint(0,7)
+                self.event_message = "Necessary Amenity: Prospective tenants desire "
+                match n_amenity:
+                    case 0: 
+                        self.event_message += "pet-friendly units"
+                        if self.city.amenity_attract.pets: self.city.amenity_attract.pets=False
+                        else: 
+                            self.city.amenity_modifier.pets *= 2
+                            more = True
+                    case 1: 
+                        self.event_message += "a parking garage"
+                        if self.city.amenity_attract.garage: self.city.amenity_attract.garage=False
+                        else: 
+                            self.city.amenity_modifier.garage *= 2
+                            more = True
+                    case 2: 
+                        self.event_message += "in-unit laundry"
+                        if self.city.amenity_attract.laundry: self.city.amenity_attract.laundry=False
+                        else: 
+                            self.city.amenity_modifier.laundry *= 2
+                            more = True
+                    case 3: 
+                        self.event_message += "a swimming pool"
+                        if self.city.amenity_attract.pool: self.city.amenity_attract.pool=False
+                        else: 
+                            self.city.amenity_modifier.pool *= 2
+                            more = True
+                    case 4: 
+                        self.event_message += "elevator accessibility"
+                        if self.city.amenity_attract.elevator: self.city.amenity_attract.elevator=False
+                        else: 
+                            self.city.amenity_modifier.elevator *= 2
+                            more = True
+                    case 5: 
+                        self.event_message += "in-unit central heating"
+                        if self.city.amenity_attract.heating: self.city.amenity_attract.heating=False
+                        else: 
+                            self.city.amenity_modifier.heating *= 2
+                            more = True
+                    case 6: 
+                        self.event_message += "in-unit air conditioning"
+                        if self.city.amenity_attract.air_conditioner: self.city.amenity_attract.air_conditioner=False
+                        else: 
+                            self.city.amenity_modifier.air_conditioner *= 2
+                            more = True
+                    case 7: 
+                        self.event_message += "a fitness center"
+                        if self.city.amenity_attract.gym: self.city.amenity_attract.gym=False
+                        else: 
+                            self.city.amenity_modifier.gym *= 2
+                            more = True
+                
+                
+                if more: self.event_message += " strongly"
         
 
 # initialize the model

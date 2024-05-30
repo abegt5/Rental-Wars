@@ -7,10 +7,14 @@
 #==============================================================================
 # Class Hierarchy: Model->City->PoI
 
+#- Imports of packages and modules:
+import random
+
 class PoI:
-    def __init__(self, x, y, poi_type):
+    def __init__(self, x, y, poi_type=None):
         self.location = (x, y)
         self.type = poi_type
+        if self.type==None: self.type = random.choice([["Small", "Medium", "Large"]])
         if self.type == "Small":
             self.value_increase_radius = 10
         elif self.type == "Medium":
