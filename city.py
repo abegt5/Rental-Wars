@@ -41,6 +41,13 @@ class City(object):
         self.add_attractions(num_poi)
         self.add_init_buildings(prob_res,num_building_unit_max)
 
+        # Initialize and PoIs
+        for _ in range(num_poi):
+            x = random.randint(0, size - 1)
+            y = random.randint(0, size - 1)
+            poi_type = random.choice(["Small", "Medium", "Large"]) # crime will be handled as an event in model 
+            self.pois.append(PoI(x, y, poi_type))
+
     def add_attractions(self, num_poi):
         """Add Points of Interest Function
         
@@ -67,14 +74,35 @@ class City(object):
         x, y = building.location
         self.grid[x][y] = building
 
-    def get_attractiveness(self):
-        """Get Attractiveness Function, used in model.sim_step() at step 0 to update individual building vacancies
-        
-        Returns value based on nearby attractions, bad spots, amenities, and rent deviation from average of nearby units (specifics TBD)""" 
+    def get_nearby_buildings(self, building, radius):
+        """Get all buildings within a given radius of the specified building."""
+        nearby_buildings = []
+        for i in range(max(0, building.location[0] - radius), min(self.size, building.location[0] + radius + 1)):
+            for j in range(max(0, building.location[1] - radius), min(self.size, building.location[1] + radius + 1)):
+                if self.buildings[i][j] is not None and self.buildings[i][j] != building:
+                    nearby_buildings.append(self.buildings[i][j])
+        return nearby_buildings
 
-    # Jeremy: Don't know when this gets used
-    def get_building(self, x, y):
-        return self.grid[x][y]
+    def get_average_rent_nearby(self, building, radius):
+        """Calculate the average rent of buildings within a given radius."""
+        nearby_buildings = self.get_nearby_buildings(building, radius)
+        if not nearby_buildings:
+            return 0
+        return sum(b.rent for b in nearby_buildings) / len(nearby_buildings)
+
+    def get_attractiveness(self, building):
+        """Calculate the attractiveness of a building based on various factors."""
+        base_attractiveness = 50  # Starting base attractiveness percentage
+        amenity_bonus = sum(value * 5 for value in building.amenities.list() if isinstance(value, bool) and value)
+        poi_modifier = sum(poi.influence_attractiveness(building, poi.distance_to(building)) for poi in self.pois)
+        average_rent = self.get_average_rent_nearby(building, 5)  # Using a fixed radius of 5 for rent comparison
+        rent_deviation = (average_rent - building.rent) / average_rent if average_rent != 0 else 0
+        rent_modifier = max(0, min(20, 20 * rent_deviation))  # Cap rent modifier between 0 and 20%
+        age_modifier = max(0, min(20, building.age // 5))  # Assuming age modifier of 4% reduction per 5 years, capped at 20%
+
+        attractiveness = (base_attractiveness + amenity_bonus + poi_modifier + rent_modifier - age_modifier)
+        return max(0, min(100, attractiveness))  # Ensure attractiveness is between 0 and 100
+
     
     # Jeremy: Don't know when this gets used
     # update the proximity_to_attractions attribute for all buildings based on their distance to each attraction
