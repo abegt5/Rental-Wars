@@ -94,13 +94,12 @@ class Landowner:
         decision = {}  # Create a dictionary to store the decision
         decision['month'] = month  # Record the month when the decision is made
 
-        if self.preference == "Agg" and self.money > 100000:  # Aggressive: Acquire new buildings aggressively
+        if self.preference == "Agg" and self.money > 50000:  # Aggressive: Acquire new buildings aggressively
             for property in city.properties:
                 if property.owner is None:
-                    self.acquire_building(building)
+                    self.acquire_building(property)
                     decision['action'] = 'Acquire'
-                    break
-                        
+                    break       
         elif self.preference == "Pass" :  # Passive: Do nothing 
             decision['action'] = 'Pass'
             pass
@@ -116,18 +115,16 @@ class Landowner:
                     self.redevelop_building(building)
                     decision['action'] = 'Improve'
                     break
-        elif self.preference == "A-Mod" and self.money > 50000:  # Aggressive-Moderate: Acquire or improve buildings
+        elif self.preference == "A-Mod" and self.money > 100000:  # Aggressive-Moderate: Acquire or improve buildings
             for building in self.buildings:
                 if building.age > 10:
                     self.redevelop_building(building)
                     decision['action'] = 'Improve'
                     break
-            for x in range(city.size):
-                for y in range(city.size):
-                    building = city.get_building(x, y)
-                    if building and building.owner is None:
-                        self.acquire_building(building)
-                        decision['action'] = 'Acquire'
-                        break
-
+            for property in city.properties:
+                if property.owner is None:
+                    self.acquire_building(property)
+                    decision['action'] = 'Acquire'
+                    break       
+        self.decisions.append(decision)
        
