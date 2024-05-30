@@ -32,15 +32,15 @@ type_list = ["Pass", "Agg", "Mod", "P-Mod", "A-Mod"]
 
 
 class Landowner:
-    def __init__(self, money, income, patience, type):
+    def __init__(self, money, income, patience, preference):
         """Landowner Initialization Function
         
         Initializes money and patience to argument passed via model.__init__"""
         self.money = money  # Initial funds
         self.income = income  # Monthly income
         self.patience = patience  # Months willing to wait for a project
-        self.type = type
-        if (self.type==None): self.type = random.choice(type_list)
+        self.preference = preference
+        if (self.preference==None): self.preference = random.choice(type_list)
         self.buildings = []  # List of buildings owned
         self.mortgages = {}  # Dictionary to track mortgage payments {building: monthly_payment}
 
@@ -98,7 +98,7 @@ class Landowner:
                     if building and building.owner is None:
                         self.acquire_building(building)
                         break
-        elif self.preference == "Pass" and self.patience > 12:  # Passive: Redevelop buildings occasionally
+        elif self.preference == "Pass" and self.patience >= 12:  # Passive: Redevelop buildings occasionally
             for building in self.buildings:
                 if building.age > 20:
                     self.redevelop_building(building)

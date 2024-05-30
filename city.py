@@ -29,6 +29,7 @@ class City(object):
         self.properties = []
         self.attractions = []
         self.bad_spots = []
+        self.size = size
         self.amenity_attract = Amenities('All')
         self.amenity_modifier = Amenities('Num')
         self.amenity_cost = Amenities('Num')
