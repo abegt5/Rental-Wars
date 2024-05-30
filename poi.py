@@ -14,15 +14,16 @@ class PoI:
     def __init__(self, x, y, poi_type=None):
         self.location = (x, y)
         self.type = poi_type
+        self.influence = 0
         if self.type==None: self.type = random.choice([["Small", "Medium", "Large"]])
         if self.type == "Small":
-            self.value_increase_radius = 10
+            self.influence = 10
         elif self.type == "Medium":
-            self.value_increase_radius = 15
+            self.influence = 15
         elif self.type == "Large":
-            self.value_increase_radius = 20
+            self.influence = 20
         elif self.type == "Crime":
-            self.value_increase_radius = 20
+            self.influence = 20
        
     def distance_to(self, building):
         """Calculate the distance from the PoI to a given building."""
@@ -31,7 +32,7 @@ class PoI:
     def influence_attractiveness(self, building):
         """Influence the attractiveness of a building based on the type of PoI and distance."""
         distance = self.distance_to(building)
-        if distance <= self.value_increase_radius:
+        if distance <= self.influence:
             if self.type in ["Small", "Medium", "Large"]:
                 return 1  # Positive influence
             elif self.type == "Crime":

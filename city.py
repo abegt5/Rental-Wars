@@ -28,8 +28,7 @@ class City(object):
         Initializes City Grid, Property List, Attraction List, and Bad Spots List"""
         self.grid = [[None for _ in range(size)] for _ in range(size)]
         self.properties = []
-        self.attractions = []
-        self.bad_spots = []
+        self.pois = []
         self.size = size
         self.amenity_attract = Amenities('All')
         self.amenity_modifier = Amenities('Num')
@@ -38,7 +37,7 @@ class City(object):
         self.amenity_cost.change_values([0.0,20000.0,1000.0,10000.0,10000.0, 5000.0, 5000.0, 10000.0])
         self.amenity_upkeep = Amenities('Num')    
         self.amenity_upkeep.change_values([0.0,100.0,200.0,150.0,200.0,200.0,200.0,100.0])
-        for _ in range(num_poi):self.add_poi()
+        for _ in range(num_poi): self.add_poi()
         self.add_init_buildings(prob_res,num_building_unit_max)
 
     def add_poi(self, type=None):
@@ -50,8 +49,7 @@ class City(object):
             if self.grid[x][y] is None:
                 miss = False
                 poi = PoI(x, y, type)
-                if type=="Crime": self.bad_spots.append(poi)
-                else: self.attractions.append(poi)
+                self.pois.append(poi)
                 self.grid[x][y] = poi
         
     def add_init_buildings(self,prob_res,num_building_unit_max):
@@ -65,7 +63,7 @@ class City(object):
                 if self.grid[x][y] is None:
                     if random.random() < prob_res:
                         unit_max = random.randint(1, num_building_unit_max)
-                        building = Building(x, y, unit_max)
+                        building = Building(x, y, unit_max, self.amenity_upkeep)
                         self.grid[x][y] = building
                         self.properties.append(building)
 
@@ -84,8 +82,8 @@ class City(object):
         nearby_buildings = []
         for i in range(max(0, building.location[0] - radius), min(self.size, building.location[0] + radius + 1)):
             for j in range(max(0, building.location[1] - radius), min(self.size, building.location[1] + radius + 1)):
-                if self.buildings[i][j] is not None and self.buildings[i][j] != building:
-                    nearby_buildings.append(self.buildings[i][j])
+                if type(self.grid[i][j])== Building and self.grid[i][j] != building:
+                    nearby_buildings.append(self.grid[i][j])
         return nearby_buildings
 
     def get_average_rent_nearby(self, building, radius):
@@ -99,7 +97,7 @@ class City(object):
         """Calculate the attractiveness of a building based on various factors."""
         base_attractiveness = 50  # Starting base attractiveness percentage
         amenity_bonus = sum(value * 5 for value in building.amenities.list() if isinstance(value, bool) and value)
-        poi_modifier = sum(poi.influence_attractiveness(building, poi.distance_to(building)) for poi in self.pois)
+        poi_modifier = sum(poi.influence_attractiveness(building) for poi in self.pois)
         average_rent = self.get_average_rent_nearby(building, 5)  # Using a fixed radius of 5 for rent comparison
         rent_deviation = (average_rent - building.rent) / average_rent if average_rent != 0 else 0
         rent_modifier = max(0, min(20, 20 * rent_deviation))  # Cap rent modifier between 0 and 20%

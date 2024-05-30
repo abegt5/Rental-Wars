@@ -62,7 +62,7 @@ class Model:
             type = random.choice(owner_type)
             landowner = Landowner(money,income,patience,type)                       # Initialize individual landowner with starting funds, income, and patience
             init_buildings = random.randint(1,num_init_buildings_max)               # Randomize number of buildings landowner will own
-            available_buildings = [building for row in self.city.grid for building in row if building and building.owner is None and building.value * 0.2 <= money] # find available buildings within budget of landowner 
+            available_buildings = [building for building in self.city.properties if (building.value * 0.2 <= money)] # find available buildings within budget of landowner 
             for _ in range(init_buildings):
                 if available_buildings:
                     building = random.choice(available_buildings)
@@ -117,13 +117,14 @@ class Model:
         #2: Update/Post Rent
         for landowner in self.landowners:
             for building in landowner.buildings:
-                building.post_rent()
+                building.post_rent(self.city)
 
         #3: Upkeep and Decisions
         for landowner in self.landowners:
             landowner.pay_mortgage()
             landowner.pay_upkeep()
-            landowner.make_decision()
+            landowner.make_decision(self.city,self.month)
+
 
         #4: Remove Landowners, step age
         for landowner in self.landowners:
@@ -168,7 +169,7 @@ class Model:
                     type = random.choice(owner_type)
                     landowner = Landowner(money,income,patience,type)                      # Initialize individual landowner with starting funds, income, and patience
                     init_buildings = random.randint(1,num_init_buildings_max)               # Randomize number of buildings landowner will own
-                    available_buildings = [building for row in self.city.grid for building in row if building and building.owner is None and building.value * 0.2 <= money]
+                    available_buildings = [building for building in self.city.properties if (building.value * 0.2 <= money)]
                     for _ in range(init_buildings):
                         if available_buildings:
                             building = random.choice(available_buildings)

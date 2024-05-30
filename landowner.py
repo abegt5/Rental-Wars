@@ -79,24 +79,28 @@ class Landowner:
         for building in self.buildings:
             self.money += sum(unit.rent for unit in building.units if unit.occupied)
 
+    def pay_upkeep(self):
+        """Pays upkeep costs for all owned buildings"""
+        
+        self.money -= sum(building.upkeep for building in self.buildings)
+
     def pay_mortgage(self):
         """Pays mortgage costs for all owned buildings."""
         total_mortgage_payment = sum(self.mortgages.values())
         self.money -= total_mortgage_payment
 
-    def make_decision(self, city):
+    def make_decision(self, city, month):
         """Decides whether to acquire, sell, or redevelop buildings based on the landowner's preference."""
         decision = {}  # Create a dictionary to store the decision
-        decision['month'] = city.month  # Record the month when the decision is made
+        decision['month'] = month  # Record the month when the decision is made
 
         if self.preference == "Agg" and self.money > 100000:  # Aggressive: Acquire new buildings aggressively
-            for x in range(city.size):
-                for y in range(city.size):
-                    building = city.get_building(x, y)
-                    if building and building.owner is None:
-                        self.acquire_building(building)
-                        decision['action'] = 'Acquire'
-                        break
+            for property in city.properties:
+                if property.owner is None:
+                    self.acquire_building(building)
+                    decision['action'] = 'Acquire'
+                    break
+                        
         elif self.preference == "Pass" :  # Passive: Do nothing 
             decision['action'] = 'Pass'
             pass
