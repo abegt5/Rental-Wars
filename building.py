@@ -24,7 +24,7 @@ unit_value_list = [625000.0,1250000.0,2500000.0,5000000.0]
 #=========================== USER ADJUSTABLE (end) ===========================
 
 class Building(object):
-    def __init__(self, x, y, unit_max, type=None, owner=None, age=None, amenities=None):
+    def __init__(self, x, y, unit_max, amenity_upkeep, type=None, owner=None, age=None, amenities=None):
         """Building Initialization Function
         
         Initializes building to given parameters or random values if not provided (None)"""
@@ -32,6 +32,7 @@ class Building(object):
         self.type = type
         if (self.type==None): self.type = random.choice(unit_type_list)
         self.rent = unit_rent_list[unit_type_list.index(self.type)]
+        self.amenity_upkeep = amenity_upkeep
         self.owner = owner
         self.age = age
         if (self.age==None): self.age=random.randint(0,age_init_max)
@@ -39,12 +40,12 @@ class Building(object):
         if (self.amenities==None): self.amenities = Amenities('rand')
         self.init_units(random.randint(1,unit_max))
         self.value = unit_value_list[unit_type_list.index(self.type)]
+        self.update_upkeep()
 
     def init_units(self, num_units):
         """Units Initialization Function, used as part of building.__init__()
         
         Sets number of units in the building and populates unit list with randomly generated units that may or may not be occupied"""
-        self.num_units = num_units
         self.units = []
         for _ in range(num_units): self.units.append(Unit(self.rent)) # TODO change rent 
 
@@ -56,11 +57,17 @@ class Building(object):
         self.update_upkeep()
         self.update_value()
 
-    def post_rent(self):
+    def post_rent(self,city):
         """Post New Rent Function, used during Rent Update at model.sim_step()
         
         Updates building's posted rent in accordance to landowner's type and market average"""
-        
+        cmp_buildings = [building for building in city.properties if building.owner!=self.owner and building.type==self.type]
+        cmp_avg_rent = sum(building.rent for building in cmp_buildings)/len(cmp_buildings)
+        match self.owner.preference:
+            case "Agg": self.rent = 0.9*cmp_avg_rent
+            case "Mod": self.rent = cmp_avg_rent
+            case "A-Mod": self.rent = 0.95*cmp_avg_rent
+
 
     def update_rental_income(self):
         """Rental Income Update Function, used before each Rent Collection at model.sim_step()
@@ -71,13 +78,17 @@ class Building(object):
             if unit.occupied==True:
                 self.rental_income += unit.rent
 
-    def update_upkeep(self,amenity_upkeep):
+    def update_upkeep(self):
         """Upkeep Update Function, used before each Pay Upkeep at model.sim_step()
         
         Sets building's upkeep to # of units * (per-unit upkeep + per-unit amenity upkeep)"""
         per_unit_amenity_upkeep = 0
+
+        for i in range(8):
+            if self.amenities.list()[i]: per_unit_amenity_upkeep += self.amenity_upkeep[i]
+
         # placeholder for "if building has a certain amenity, add global upkeep for that amenity to per_unit_amenity_upkeep"
-        self.upkeep = self.num_units*(self.unit_upkeep+per_unit_amenity_upkeep)
+        self.upkeep = len(self.units)*per_unit_amenity_upkeep
         
         
     def add_amenity(self, type):
