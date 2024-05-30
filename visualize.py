@@ -150,6 +150,7 @@ def plot_landowner_finances(data):
     plt.plot(x,y3,label='Moderate Landowners')
     plt.plot(x,y4,label='Aggressive-Moderate Landowners')
     plt.plot(x,y5,label='Passive-Moderate Landowners')
+    plt.legend(loc='lower left')
     plt.show()
 
 #show value of buildings 
