@@ -33,7 +33,7 @@ class City(object):
         self.size = size
         self.amenity_attract = Amenities('All')
         self.amenity_modifier = Amenities('Num')
-        self.amenity_modifier.change_values([(((random.random()*4)+1)/100) for _ in range(8)])
+        self.amenity_modifier.change_values([random.randint(1,5) for _ in range(8)])
         self.amenity_cost = Amenities('Num')
         self.amenity_cost.change_values([0.0,20000.0,1000.0,10000.0,10000.0, 5000.0, 5000.0, 10000.0])
         self.amenity_upkeep = Amenities('Num')
@@ -58,7 +58,19 @@ class City(object):
         For simplicity's sake, attractions are constant do not change throughout the simulation
         
         Warning: PoI class will contain Bad Spots as a type, which should only be used during events and not initialization. Adjust random accordingly."""
-        
+        for _ in range(num_poi):
+            hit = False
+            while not hit:
+                x = random.randint(0, self.size - 1)
+                y = random.randint(0, self.size - 1)
+                if self.grid[x][y]==None:
+                    hit = True
+                    poi_type = random.choice(["Small", "Medium", "Large"]) # crime will be handled as an event in model 
+                    self.pois.append(PoI(x, y, poi_type))
+            
+
+            
+
     def add_init_buildings(self,prob_res,num_building_unit_max):
         """Add Residences (initial) Function
         
