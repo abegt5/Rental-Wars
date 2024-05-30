@@ -135,6 +135,7 @@ def plot_occupancy_rate(city):
     plt.ylabel('Y Coordinate')
 
 def plot_landowner_finances(data):
+    plt.figure(figsize=(10, 10))
     plt.title('Average Landowner Finances over simulation period')
     plt.xlabel('Months')
     plt.ylabel('Finances')
