@@ -21,7 +21,7 @@ class PoI:
         elif self.type == "Large":
             self.value_increase_radius = 20
         elif self.type == "Crime":
-            self.value_increase_radius = 0  # No preset radius for Crime, will be adjusted by event function
+            self.value_increase_radius = 20
        
     def distance_to(self, building):
         """Calculate the distance from the PoI to a given building."""
