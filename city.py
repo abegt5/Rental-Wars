@@ -36,7 +36,7 @@ class City(object):
         self.amenity_modifier.change_values([(((random.random()*4)+1)/100) for _ in range(8)])
         self.amenity_cost = Amenities('Num')
         self.amenity_cost.change_values([0.0,20000.0,1000.0,10000.0,10000.0, 5000.0, 5000.0, 10000.0])
-        self.amenity_upkeep = Amenities('Num')
+        self.amenity_upkeep = Amenities('Num')    
         self.amenity_upkeep.change_values([0.0,100.0,200.0,150.0,200.0,200.0,200.0,100.0])
         self.add_attractions(num_poi)
         self.add_init_buildings(prob_res,num_building_unit_max)
@@ -103,6 +103,8 @@ class City(object):
         attractiveness = (base_attractiveness + amenity_bonus + poi_modifier + rent_modifier - age_modifier)
         return max(0, min(100, attractiveness))  # Ensure attractiveness is between 0 and 100
 
+    def get_building(self, x, y):
+        return self.grid[x][y]
     
     # Jeremy: Don't know when this gets used
     # update the proximity_to_attractions attribute for all buildings based on their distance to each attraction
