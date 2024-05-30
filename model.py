@@ -22,7 +22,7 @@ from poi import PoI
 from city import City
 from landowner import Landowner
 from unit import Unit
-from visualize import *
+from visualize import plot_grid, plot_building_values, plot_landowner_metrics, plot_occupancy_rate
 
 #========================== USER ADJUSTABLE (begin) ==========================
 city_size = 50                                                                      # City Size
@@ -81,6 +81,9 @@ class Model:
         while (self.month<months):
             self.sim_step()
             if (self.month>0 and self.month%num_event_interval==0): self.event()
+        # Visualization at regular intervals or end of simulation
+            if self.month % 12 == 0 or self.month == months - 1:
+                self.visualize()
 
     def sim_step(self):
         """Simulation Step Function
@@ -230,6 +233,17 @@ class Model:
                 
                 
                 if more: self.event_message += " strongly"
+
+
+    def visualize(self):
+        """Visualization Function
+        
+        Calls the visualization functions to display the current state of the city and landowners.
+        """
+        plot_grid(self.city)
+        plot_building_values(self.city)
+        plot_landowner_metrics(self.landowners)
+        plot_occupancy_rate(self.city)
         
 
 # initialize the model

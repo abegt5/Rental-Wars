@@ -37,6 +37,7 @@ class Landowner:
         if (self.preference==None): self.preference = random.choice(type_list)
         self.buildings = []  # List of buildings owned
         self.mortgages = {}  # Dictionary to track mortgage payments {building: monthly_payment}
+        self.decisions = []
 
     def acquire_building(self, building):
         """Building Acquisition Function, used during Land Acquisition option of model.sim_step()
@@ -85,35 +86,44 @@ class Landowner:
 
     def make_decision(self, city):
         """Decides whether to acquire, sell, or redevelop buildings based on the landowner's preference."""
+        decision = {}  # Create a dictionary to store the decision
+        decision['month'] = city.month  # Record the month when the decision is made
+
         if self.preference == "Agg" and self.money > 100000:  # Aggressive: Acquire new buildings aggressively
             for x in range(city.size):
                 for y in range(city.size):
                     building = city.get_building(x, y)
                     if building and building.owner is None:
                         self.acquire_building(building)
+                        decision['action'] = 'Acquire'
                         break
         elif self.preference == "Pass" :  # Passive: Do nothing 
+            decision['action'] = 'Pass'
             pass
         elif self.preference == "Mod":  # Moderate: Improve existing buildings
             for building in self.buildings:
                 if building.age > 15:
                     self.redevelop_building(building)
+                    decision['action'] = 'Improve'
                     break
         elif self.preference == "P-Mod" and self.patience >= 12:  # Passive-Moderate: Sometimes redevelop buildings
             for building in self.buildings:
                 if building.age > 20 and random.random() < 0.5:
                     self.redevelop_building(building)
+                    decision['action'] = 'Improve'
                     break
         elif self.preference == "A-Mod" and self.money > 50000:  # Aggressive-Moderate: Acquire or improve buildings
             for building in self.buildings:
                 if building.age > 10:
                     self.redevelop_building(building)
+                    decision['action'] = 'Improve'
                     break
             for x in range(city.size):
                 for y in range(city.size):
                     building = city.get_building(x, y)
                     if building and building.owner is None:
                         self.acquire_building(building)
+                        decision['action'] = 'Acquire'
                         break
 
        
