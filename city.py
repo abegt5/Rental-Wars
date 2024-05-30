@@ -72,6 +72,7 @@ class City(object):
                         self.properties.append(building)
 
     def add_building(self,building):
+        
         """Add Building (mid-simulation) Function, to be used during 'new competition' event or landowner acquisition of undeveloped land
         
         Checks city grid to ensure location is empty(None), then generates a new building at coordinates and appends it to Property List.
