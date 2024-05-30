@@ -28,7 +28,7 @@ class City(object):
         Initializes City Grid, Property List, Attraction List, and Bad Spots List"""
         self.grid = [[None for _ in range(size)] for _ in range(size)]
         self.properties = []
-        self.attractions = []
+        self.pois = []
         self.bad_spots = []
         self.size = size
         self.amenity_attract = Amenities('All')
@@ -66,24 +66,16 @@ class City(object):
         x, y = building.location
         self.grid[x][y] = building
 
-    def get_attractiveness(self):
-        """Get Attractiveness Function, used in model.sim_step() at step 0 to update individual building vacancies
+    # Might belong in model.sim_step() instead of here
+    def get_attractiveness(self, building):
+        """Get Attractiveness Function, used in model.sim_step() at step 0 to update individual building vacancies"""
+        attractiveness = 0
+        for PoI in self.pois:
+            attractiveness += PoI.influence_attractiveness(building)
         
-        Returns value based on nearby attractions, bad spots, amenities, and rent deviation from average of nearby units (specifics TBD)""" 
+        """Returns value based on nearby attractions, bad spots, amenities, and rent deviation from average of nearby units (specifics TBD)""" 
 
     # Jeremy: Don't know when this gets used
     def get_building(self, x, y):
         return self.grid[x][y]
     
-    # Jeremy: Don't know when this gets used
-    # update the proximity_to_attractions attribute for all buildings based on their distance to each attraction
-    def update_buildings_proximity_to_attractions(self):
-        for attraction in self.attractions:
-            for x in range(self.size):
-                for y in range(self.size):
-                    building = self.grid[x][y]
-                    if building:
-                        distance = abs(attraction.location[0] - x) + abs(attraction.location[1] - y)
-                        if distance <= attraction.value_increase_radius:
-                            building.proximity_to_attractions += 1  # or any specific value logic
-                            building.update_value()
