@@ -27,6 +27,7 @@ from . import visualize as V
 city_size = 20                                                                      # City Size
 num_landowners = 20                                                                 # Initial number of Land Owners
 num_months = 240                                                                    # Number of months the simulation will run
+num_event_interval = 60                                                             # Number of months that pass before a mid-simulation event occurs
 num_money_min = 50000                                                               # Minimum amount of money a Landowner initializes with
 num_money_max = 500000                                                              # Maximum amount of money a Landowner initializes with
 num_income_min = 1000                                                               # Mininum amount of monthly income a Landowner initializes with
@@ -77,8 +78,7 @@ class Model:
         """
         while (self.month<months):
             self.sim_step()
-            if (self.month>0 and self.month%60==0):
-                self.event()
+            if (self.month>0 and self.month%num_event_interval==0): self.event()
 
     def sim_step(self):
         """Simulation Step Function
