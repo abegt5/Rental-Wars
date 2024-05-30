@@ -15,7 +15,7 @@ class PoI:
         self.location = (x, y)
         self.type = poi_type
         self.influence = 0
-        if self.type==None: self.type = random.choice([["Small", "Medium", "Large"]])
+        if self.type==None: self.type = random.choice(["Small", "Medium", "Large"])
         if self.type == "Small":
             self.influence = 10
         elif self.type == "Medium":
