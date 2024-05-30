@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 from poi import PoI
 from building import Building
 
-def plot_grid(city):
+def plot_grid(city, mode=None, month=None):
     """Plot the city grid with buildings and points of interest."""
     size = city.size
     grid = city.grid
@@ -33,7 +33,7 @@ def plot_grid(city):
             if isinstance(grid[x][y], PoI):
                 poi = grid[x][y]
                 ax.add_patch(plt.Rectangle((x, y), 1, 1, color=colors[poi.type], label=poi.type))
-            elif isinstance(grid[x][y], Building):
+            elif isinstance(grid[x][y], Building) and grid[x][y].owner!=None:
                 ax.add_patch(plt.Rectangle((x, y), 1, 1, color=colors["Residential"], label="Residential"))
 
     ax.set_xlim(0, size)
@@ -42,13 +42,15 @@ def plot_grid(city):
     ax.set_yticks(N.arange(0, size+1, 1))
     ax.grid(which='both')
     ax.set_aspect('equal')
-    plt.title('City Grid')
+    if mode=="anim":plt.title('City Grid - Month #%s' % month)
+    else : plt.title('City Grid - End of Sim')
     plt.legend(handles=[plt.Line2D([0], [0], color=colors[key], lw=4) for key in colors],
                labels=[key for key in colors])
-    plt.show()  # Use pause instead of show
+    if mode=="anim": plt.pause(2)
 
 def plot_building_values(city):
     """Plot the values of the buildings in the city grid."""
+    plt.figure(1)
     size = city.size
     grid = city.grid
     building_values = N.zeros((size, size))
@@ -61,13 +63,13 @@ def plot_building_values(city):
     plt.figure(figsize=(10, 10))
     plt.imshow(building_values, cmap="viridis", origin="lower")
     plt.colorbar(label='Building Value')
-    plt.title('Building Values in the City Grid')
+    plt.title('Building Values in the City Grid - End of Sim')
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
-    plt.show()
 
 def plot_landowner_metrics(landowners):
     """Plot the net worth and decisions of landowners."""
+    plt.figure(2)
     net_worths = [landowner.money for landowner in landowners]
     decisions = [landowner.decisions for landowner in landowners]
 
@@ -108,11 +110,11 @@ def plot_landowner_metrics(landowners):
     # Create a legend using the handles and labels collected
     ax2.legend(handles, labels, loc='upper left')
 
-    plt.title('Net Worth and Decisions of Landowners')
-    plt.show()
+    plt.title('Net Worth and Decisions of Landowners - End of Sim')
 
 def plot_occupancy_rate(city):
     """Plot the occupancy rate of buildings in the city grid."""
+    plt.figure(3)
     size = city.size
     grid = city.grid
     occupancy_rates = N.zeros((size, size))
@@ -128,10 +130,9 @@ def plot_occupancy_rate(city):
     plt.figure(figsize=(10, 10))
     plt.imshow(occupancy_rates, cmap="coolwarm", origin="lower")
     plt.colorbar(label='Occupancy Rate')
-    plt.title('Occupancy Rates in the City Grid')
+    plt.title('Occupancy Rates in the City Grid - End of Sim')
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
-    plt.show()
 
 
 #show value of buildings 

@@ -29,13 +29,13 @@ from visualize import plot_grid, plot_building_values, plot_landowner_metrics, p
 city_size = 50                                                                      # City Size
 num_landowners = 20                                                                 # Initial number of Land Owners
 num_new_landowners = 10                                                             # Number of Land Owners added during Mid-sim event
-num_months = 240                                                                    # Number of months the simulation will run
+num_months = 120                                                                    # Number of months the simulation will run
 num_event_interval = 60                                                             # Number of months that pass before a mid-simulation event occurs
-num_money_min = 500000.0                                                            # Minimum amount of money a Landowner initializes with
-num_money_max = 5000000.0                                                           # Maximum amount of money a Landowner initializes with
+num_money_min = 5000000.0                                                           # Minimum amount of money a Landowner initializes with
+num_money_max = 50000000.0                                                          # Maximum amount of money a Landowner initializes with
 num_income_min = 1000.0                                                             # Mininum amount of monthly income a Landowner initializes with
 num_income_max = 5000.0                                                             # Maximum amount of monthly income a Landowner initializes with
-num_init_buildings_max = 3                                                          # Maximum number of buildings a Landowner initializes with
+num_init_buildings_max = 20                                                         # Maximum number of buildings a Landowner initializes with
 num_patience_min = 6                                                                # Minimum amount of months a Landowner is willing to wait to start a project
 num_patience_max = 24                                                               # Maximum amount of months a Landowner is willing to wait to start a project
 owner_type = ["Pass", "Agg", "Mod", "P-Mod", "A-Mod"]                               # Choices of Landowner Disposition/Preference/Type - details in .landowner
@@ -54,6 +54,7 @@ class Model:
         """
         self.month = 0                                                              # Initialize Month Count
         self.city = City(city_size, prob_res, num_poi, num_building_unit_max)       # Initialize City using Size, residential probability, and PoI number adjustables
+        self.city_data = []
         self.landowners = []                                                        # Initialize Landowner List
         self.retired = []                                                           # Initialize Retired Landowner List
         for _ in range(num_landowners):                                             # Populate Landowner List using:
@@ -80,10 +81,21 @@ class Model:
         Steps model until target month is reached. Triggers random event every 60 months (5 years).
         """
         while (self.month<months):
+            self.city_data.append(self.city)
             self.sim_step()
+            
             if (self.month>0 and self.month%num_event_interval==0): self.event()
-        # Visualization at regular intervals or end of simulation
-            if self.month % 12 == 0 or self.month == months - 1:
+
+        # Interactive Visualization across initial to one-year point
+            if self.month <= 12 and self.month % 3 == 0:
+                plt.ion()
+                plot_grid(self.city,"anim",self.month)
+                if self.month == 12:
+                    plt.ioff()
+                    plt.show()
+
+        # Visualization at end of simulation
+            if self.month == months - 1:
                 self.visualize()
 
     def sim_step(self):
@@ -244,6 +256,7 @@ class Model:
         plot_building_values(self.city)
         plot_landowner_metrics(self.landowners)
         plot_occupancy_rate(self.city)
+        plt.show()
         
 
 # initialize the model
