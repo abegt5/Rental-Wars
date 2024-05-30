@@ -7,12 +7,6 @@
 #==============================================================================
 # Class Hierarchy: Model->Landowner(List)->Landowner(Individual)
 
-# TODO:
-#   complete assign_building()
-#   complete acquire_building()
-#   complete update_upkeep()
-#   complete update_rental_income()
-
 #- Imports of packages and modules:
 import random
 import numpy as N
