@@ -231,8 +231,6 @@ class Model:
                         else: 
                             self.city.amenity_modifier.gym *= 2
                             more = True
-                
-                
                 if more: self.event_message += " strongly"
 
 
@@ -248,7 +246,7 @@ class Model:
         
 
 # initialize the model
-model = Model(prob_residential[0]) # temporarily setting residential probability to 60%, may consider running multiple models of varying probabilities down the road
+model = Model(prob_residential[0]) # temporarily setting residential probability to 70%, may consider running multiple models of varying probabilities down the road
 
 # run the simulation
 model.run_sim(num_months)
