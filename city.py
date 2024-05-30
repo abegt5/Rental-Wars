@@ -41,23 +41,19 @@ class City(object):
         self.add_attractions(num_poi)
         self.add_init_buildings(prob_res,num_building_unit_max)
 
-        # Initialize and PoIs
-        for _ in range(num_poi):
-            x = random.randint(0, size - 1)
-            y = random.randint(0, size - 1)
-            poi_type = random.choice(["Small", "Medium", "Large"]) # crime will be handled as an event in model 
-            self.pois.append(PoI(x, y, poi_type))
-
     def add_attractions(self, num_poi):
-        """Add Points of Interest Function
-        
-        Randomly generates a pair of coordinates on the city grid to add attractions.
-        If coordinate is empty(None), generates a new attraction (of random type), attaches it to the grid, and appends it to the attraction list
-        If an attraction already exists at given coordinate pair, generates a new pair
-        
-        For simplicity's sake, attractions are constant do not change throughout the simulation
-        
-        Warning: PoI class will contain Bad Spots as a type, which should only be used during events and not initialization. Adjust random accordingly."""
+        """Add Points of Interest Function"""
+        poi_types = ["Small", "Medium", "Large"]
+        count = 0
+        while count < num_poi:
+            x = random.randint(0, self.size - 1)
+            y = random.randint(0, self.size - 1)
+            if self.grid[x][y] is None:
+                poi_type = random.choice(poi_types)
+                poi = PoI(x, y, poi_type)
+                self.pois.append(poi)
+                self.grid[x][y] = poi
+                count += 1
         
     def add_init_buildings(self,prob_res,num_building_unit_max):
         """Add Residences (initial) Function
@@ -65,6 +61,15 @@ class City(object):
         Navigates the entire city grid, checks to make sure the grid unit is empty(None) and generates a new building at a set probability.
         New residential building is allocated to respective grid space and appended to Property List
         Initially generated buildings are randomized in unit type, unit limit, age, and amenities"""
+        for x in range(self.size):
+            for y in range(self.size):
+                if self.grid[x][y] is None:
+                    prob_res1 = random.choice(prob_res)
+                    if random.random() < prob_res1:
+                        unit_max = random.randint(1, num_building_unit_max)
+                        building = Building(x, y, unit_max)
+                        self.grid[x][y] = building
+                        self.properties.append(building)
 
     def add_building(self,building):
         """Add Building (mid-simulation) Function, to be used during 'new competition' event or landowner acquisition of undeveloped land
@@ -73,6 +78,7 @@ class City(object):
         New building will likely have arbitrarily established values for unit type, limit, and amenities. Age will be fixed at 0"""
         x, y = building.location
         self.grid[x][y] = building
+        self.properties.append(building)
 
     def get_nearby_buildings(self, building, radius):
         """Get all buildings within a given radius of the specified building."""
