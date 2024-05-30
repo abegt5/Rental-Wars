@@ -93,6 +93,7 @@ class Landowner:
         """Decides whether to acquire, sell, or redevelop buildings based on the landowner's preference."""
         decision = {}  # Create a dictionary to store the decision
         decision['month'] = month  # Record the month when the decision is made
+        decision['action'] = 'None'
 
         if self.preference == "Agg" and self.money > 50000:  # Aggressive: Acquire new buildings aggressively
             for property in city.properties:

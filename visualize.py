@@ -76,17 +76,29 @@ def plot_landowner_metrics(landowners):
     color = 'tab:blue'
     ax1.set_xlabel('Landowners')
     ax1.set_ylabel('Net Worth', color=color)
-    ax1.bar(range(len(landowners)), net_worths, color=color)
+    ax1.plot(range(len(landowners)), net_worths, color=color)
     ax1.tick_params(axis='y', labelcolor=color)
 
     ax2 = ax1.twinx()
     color = 'tab:green'
     ax2.set_ylabel('Decisions', color=color)
-    ax2.plot(range(len(landowners)), decisions, color=color)
+
+    # Flatten the decisions list to extract 'action' for each landowner
+    action_labels = {'Acquire': 1, 'Pass': 2, 'Improve': 3, 'None': 4}
+    for idx, decision_list in enumerate(decisions):
+        actions = [action_labels[decision['action']] for decision in decision_list]
+        months = [decision['month'] for decision in decision_list]
+        ax2.plot(months, [idx] * len(actions), 'o', label=f'Landowner {idx+1}', alpha=0.7)  # Plot each decision as a point
+
     ax2.tick_params(axis='y', labelcolor=color)
+    ax2.set_yticks(range(len(landowners)))
+    ax2.set_yticklabels([f'Landowner {i+1}' for i in range(len(landowners))])
 
     plt.title('Net Worth and Decisions of Landowners')
+    plt.legend(loc='upper left')
     plt.show()
+
+
 
 def plot_occupancy_rate(city):
     """Plot the occupancy rate of buildings in the city grid."""
