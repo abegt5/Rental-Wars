@@ -24,8 +24,9 @@ def plot_grid(city, mode=None, month=None):
         "Small": cmap(1),
         "Medium": cmap(2),
         "Large": cmap(3),
-        "Crime": cmap(4),
-        "Residential": cmap(5)
+        "Crime": cmap(6),
+        "Residential": cmap(5),
+        "Unowned": cmap(10)
     }
 
     for x in range(size):
@@ -35,6 +36,8 @@ def plot_grid(city, mode=None, month=None):
                 ax.add_patch(plt.Rectangle((x, y), 1, 1, color=colors[poi.type], label=poi.type))
             elif isinstance(grid[x][y], Building) and grid[x][y].owner!=None:
                 ax.add_patch(plt.Rectangle((x, y), 1, 1, color=colors["Residential"], label="Residential"))
+            elif isinstance(grid[x][y], Building) and grid[x][y].owner==None:
+                ax.add_patch(plt.Rectangle((x, y), 1, 1, color=colors["Unowned"], label="Unowned"))
 
     ax.set_xlim(0, size)
     ax.set_ylim(0, size)
@@ -50,7 +53,6 @@ def plot_grid(city, mode=None, month=None):
 
 def plot_building_values(city):
     """Plot the values of the buildings in the city grid."""
-    plt.figure(1)
     size = city.size
     grid = city.grid
     building_values = N.zeros((size, size))
@@ -69,7 +71,6 @@ def plot_building_values(city):
 
 def plot_landowner_metrics(landowners):
     """Plot the net worth and decisions of landowners."""
-    plt.figure(2)
     net_worths = [landowner.money for landowner in landowners]
     decisions = [landowner.decisions for landowner in landowners]
 
@@ -114,7 +115,6 @@ def plot_landowner_metrics(landowners):
 
 def plot_occupancy_rate(city):
     """Plot the occupancy rate of buildings in the city grid."""
-    plt.figure(3)
     size = city.size
     grid = city.grid
     occupancy_rates = N.zeros((size, size))
@@ -134,6 +134,22 @@ def plot_occupancy_rate(city):
     plt.xlabel('X Coordinate')
     plt.ylabel('Y Coordinate')
 
+def plot_landowner_finances(data):
+    plt.title('Average Landowner Finances over simulation period')
+    plt.xlabel('Months')
+    plt.ylabel('Finances')
+    x = [d[0] for d in data]
+    y1 = [d[1] for d in data]
+    y2 = [d[2] for d in data]
+    y3 = [d[3] for d in data]
+    y4 = [d[4] for d in data]
+    y5 = [d[5] for d in data]
+    plt.plot(x,y1,label='Aggressive Landowners')
+    plt.plot(x,y2,label='Passive Landowners')
+    plt.plot(x,y3,label='Moderate Landowners')
+    plt.plot(x,y4,label='Aggressive-Moderate Landowners')
+    plt.plot(x,y5,label='Passive-Moderate Landowners')
+    plt.show()
 
 #show value of buildings 
 #show increase and decrease of net worth of landowners
