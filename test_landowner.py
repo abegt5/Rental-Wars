@@ -60,7 +60,7 @@ class Test_landowner(unittest.TestCase):
         self.landowner.sell_building(self.building1)
         self.assertNotIn(self.building1, self.landowner.buildings)
         self.assertEqual(self.building1.owner, None)
-        self.assertEqual(self.landowner.money, initial_money + self.building1.value)
+        self.assertEqual(self.landowner.money, initial_money + self.building1.value) #value might change based on attractions and amenitys
 
     def test_redevelop_building(self):
         print("Test that a landowner can redevelop a building.")

@@ -27,7 +27,7 @@ class City(object):
         Initializes City Grid, Property List, Attraction List, and Bad Spots List"""
         self.grid = [[None for _ in range(size)] for _ in range(size)]
         self.properties = []
-        self.attractions = []
+        self.pois = []
         self.bad_spots = []
         self.size = size
         self.amenity_attract = Amenities('All')
@@ -64,10 +64,13 @@ class City(object):
         self.grid[x][y] = building
 
     # Might belong in model.sim_step() instead of here
-    def get_attractiveness(self):
-        """Get Attractiveness Function, used in model.sim_step() at step 0 to update individual building vacancies
+    def get_attractiveness(self, building):
+        """Get Attractiveness Function, used in model.sim_step() at step 0 to update individual building vacancies"""
+        attractiveness = 0
+        for PoI in self.pois:
+            attractiveness += PoI.influence_attractiveness(building)
         
-        Returns value based on nearby attractions, bad spots, amenities, and rent deviation from average of nearby units (specifics TBD)""" 
+        """Returns value based on nearby attractions, bad spots, amenities, and rent deviation from average of nearby units (specifics TBD)""" 
 
     # Jeremy: Don't know when this gets used
     def get_building(self, x, y):
