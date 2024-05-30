@@ -9,10 +9,6 @@
 
 # TODO:
 #   Stuff (I'm too tired to process what)
-# Class Hierarchy: Model->City->Building
-
-# TODO:
-#   Stuff (I'm too tired to process what)
 
 #- Imports of packages and modules:
 import random

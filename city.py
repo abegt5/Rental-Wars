@@ -16,6 +16,7 @@
 
 #- Imports of packages and modules:
 import numpy as N
+import random
 from building import Building
 from poi import PoI
 from amenity import Amenities
@@ -32,7 +33,9 @@ class City(object):
         self.size = size
         self.amenity_attract = Amenities('All')
         self.amenity_modifier = Amenities('Num')
+        self.amenity_modifier.change_values([(((random.random()*4)+1)/100) for _ in range(8)])
         self.amenity_cost = Amenities('Num')
+        self.amenity_cost.change_values([])
         self.amenity_upkeep = Amenities('Num')
         self.add_attractions(num_poi)
         self.add_init_buildings(prob_res,num_building_unit_max)
@@ -63,7 +66,6 @@ class City(object):
         x, y = building.location
         self.grid[x][y] = building
 
-    # Might belong in model.sim_step() instead of here
     def get_attractiveness(self):
         """Get Attractiveness Function, used in model.sim_step() at step 0 to update individual building vacancies
         
