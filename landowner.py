@@ -97,9 +97,10 @@ class Landowner:
 
         if self.preference == "Agg" and self.money > 50000:  # Aggressive: Acquire new buildings aggressively
             property_list = [p for p in city.properties if p.owner is None]
-            property = random.choice(property_list)
-            self.acquire_building(property)
-            decision['action'] = 'Acquire'
+            if property_list: 
+                property = random.choice(property_list)
+                self.acquire_building(property)
+                decision['action'] = 'Acquire'
         elif self.preference == "Pass" :  # Passive: Do nothing 
             decision['action'] = 'Pass'
             pass
@@ -124,8 +125,9 @@ class Landowner:
                         break
             else:
                 property_list = [p for p in city.properties if p.owner is None]
-                property = random.choice(property_list)
-                self.acquire_building(property)
-                decision['action'] = 'Acquire'
+                if property_list: 
+                    property = random.choice(property_list)
+                    self.acquire_building(property)
+                    decision['action'] = 'Acquire'
         self.decisions.append(decision)
        
