@@ -98,12 +98,28 @@ class Landowner:
                     if building and building.owner is None:
                         self.acquire_building(building)
                         break
-        elif self.preference == "Pass" and self.patience >= 12:  # Passive: Redevelop buildings occasionally
+        elif self.preference == "Pass" :  # Passive: Do nothing 
+            pass
+        elif self.preference == "Mod":  # Moderate: Improve existing buildings
             for building in self.buildings:
-                if building.age > 20:
+                if building.age > 15:
                     self.redevelop_building(building)
                     break
-        # Additional logic for other types can be added here
+        elif self.preference == "P-Mod" and self.patience >= 12:  # Passive-Moderate: Sometimes redevelop buildings
+            for building in self.buildings:
+                if building.age > 20 and random.random() < 0.5:
+                    self.redevelop_building(building)
+                    break
+        elif self.preference == "A-Mod" and self.money > 50000:  # Aggressive-Moderate: Acquire or improve buildings
+            for building in self.buildings:
+                if building.age > 10:
+                    self.redevelop_building(building)
+                    break
+            for x in range(city.size):
+                for y in range(city.size):
+                    building = city.get_building(x, y)
+                    if building and building.owner is None:
+                        self.acquire_building(building)
+                        break
 
-
-
+       
