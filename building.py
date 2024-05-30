@@ -9,6 +9,10 @@
 
 # TODO:
 #   Stuff (I'm too tired to process what)
+# Class Hierarchy: Model->City->Building
+
+# TODO:
+#   Stuff (I'm too tired to process what)
 
 #- Imports of packages and modules:
 import random
@@ -16,8 +20,8 @@ from unit import Unit
 from amenity import Amenities
 
 #========================== USER ADJUSTABLE (begin) ==========================
-age_init_max = 60
-unit_type_list = ['std','1bd','2bd','3bd']
+age_max = 60
+unit_type_list = ['std','1x1','2x1','2x2','3x1','3x2','3x3']
 
 #=========================== USER ADJUSTABLE (end) ===========================
 
@@ -32,7 +36,7 @@ class Building(object):
         self.unit_upkeep = None # TODO: replace with unit_upkeep entry that correlates with self.type
         self.owner = owner
         self.age = age
-        if (self.age==None): self.age=random.randint(0,age_init_max)
+        if (self.age==None): self.age=random.randint(0,age_max)
         self.amenities = amenities
         if (self.amenities==None): self.amenities = Amenities('rand')
         self.init_units(random.randint(1,unit_max))

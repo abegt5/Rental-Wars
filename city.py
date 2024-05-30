@@ -63,6 +63,7 @@ class City(object):
         x, y = building.location
         self.grid[x][y] = building
 
+    # Might belong in model.sim_step() instead of here
     def get_attractiveness(self):
         """Get Attractiveness Function, used in model.sim_step() at step 0 to update individual building vacancies
         
