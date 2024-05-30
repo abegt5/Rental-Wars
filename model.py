@@ -17,11 +17,12 @@
 import numpy as N
 import random
 import matplotlib.pyplot as plt
-from .building import Building
-from .city import City
-from .landowner import Landowner
-from .unit import Unit
-from . import visualize as V
+from building import Building
+from poi import PoI
+from city import City
+from landowner import Landowner
+from unit import Unit
+from visualize import visualize as V
 
 #========================== USER ADJUSTABLE (begin) ==========================
 city_size = 50                                                                      # City Size
@@ -50,7 +51,6 @@ class Model:
         Initialized Model step-progressed in model.run_sim until intended month is reached.
         """
         self.month = 0                                                              # Initialize Month Count
-        self.step = 0                                                               # Initialize Step Phase Count
         self.city = City(city_size, prob_res, num_poi, num_building_unit_max)       # Initialize City using Size, residential probability, and PoI number adjustables
         self.landowners = []                                                        # Initialize Landowner List
         self.retired = []                                                           # Initialize Retired Landowner List
@@ -94,30 +94,71 @@ class Model:
         (The step system is to organize the sequence and more easily insert code to extract data in-between steps.
         Alternatively, we can skip the step system outright and just code the sequence in order)
         """
-        # update building ages and statuses
-        for row in self.city.grid:
-            for building in row:
-                if building:
-                    building.age += 1
-                    # additional logic for updating status, collecting rent, etc
-
-        # Landowner actions
+        #0: Building Occupancy check
         for landowner in self.landowners:
-            # example of a decison a landowner can make change or add more 
-            if landowner.money > 50000:
-                for x in range(self.city.size):
-                    for y in range(self.city.size):
-                        building = self.city.get_building(x, y)
-                        if building and building.owner is None:
-                            landowner.acquire_building(building)
+            for building in landowner.buildings:
+                prob_tenancy = self.city.get_attractiveness(building)
+                for unit in building.units:
+                    if not unit.occupied:
+                        if random.randint(0,100)<prob_tenancy: unit.fill(building.rent)
+
+        #1: Collect Rent
+        for landowner in self.landowners:
+            landowner.collect_rent()
+            for building in landowner.buildings:
+                for unit in building.units:
+                    if unit.occupied:unit.step()
+
+        #2: Update/Post Rent
+        for landowner in self.landowners:
+            for building in landowner.buildings:
+                building.post_rent()
+
+        #3: Upkeep and Decisions
+        for landowner in self.landowners:
+            landowner.pay_mortgage()
+            landowner.pay_upkeep()
+            landowner.make_decision()
+
+        #4: Remove Landowners, step age
+        for landowner in self.landowners:
+            if not landowner.buildings:
+                self.retired.append(landowner)
+                self.landowners.remove(landowner)
+        for property in self.city.properties:
+            property.age += 1
+            property.value *= 1.07177 #assumption: property value doubles every 2 years (at least rent does)
+        
+        self.month+=1
     
-    def event(self,i=random.randint(0,2)):
+    def event(self,i=random.randint(0,3)):
         """Event Function
         
         Holds an event that occurs in the simulation at random. Function details are held in this function and called by index
 
         (Events are expected to be random, but for testing purposes or targeted examination may be arbitrarily constant) 
         """
+        match i:
+            case 0:
+                # Pet Damage: Landowners take a fixed hit to their finances for every unit they own with a pet-friendly building
+                for landowner in self.landowners:
+                    for building in landowner.buildings:
+                        if building.amenities.pets:
+                            for unit in building.units:
+                                if unit.occupied:
+                                    landowner.money -= 5000
+
+            case 1:
+                # Crime Zone: An empty plot or unowned residence is replaced by a crime PoI
+                x = random.randint(0,city_size-1)
+                y = random.randint(0,city_size-1)
+            case 2:
+                # New Blood: More Landowners enter the simulation and get buildings
+                None
+            case 3:
+                # Necessary Amenity: Lack of a specific amenity now negatively impacts attractiveness
+                None
+        
 
 # initialize the model
 model = Model(prob_residential[0]) # temporarily setting residential probability to 60%, may consider running multiple models of varying probabilities down the road
